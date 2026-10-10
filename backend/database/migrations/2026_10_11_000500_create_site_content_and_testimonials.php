@@ -1,0 +1,4 @@
+<?php
+use Illuminate\Database\Migrations\Migration; use Illuminate\Database\Schema\Blueprint; use Illuminate\Support\Facades\Schema;
+return new class extends Migration { public function up(): void { if (!Schema::hasTable('site_contents')) Schema::create('site_contents', function(Blueprint $table){$table->id();$table->string('content_key',100)->unique();$table->string('label',180);$table->longText('content_value')->nullable();$table->timestamps();}); if (!Schema::hasTable('testimonials')) Schema::create('testimonials',function(Blueprint $table){$table->id();$table->string('person_name',140);$table->string('role_or_location',180)->nullable();$table->text('quote');$table->string('opportunity_type',80)->nullable();$table->boolean('is_published')->default(false)->index();$table->unsignedInteger('sort_order')->default(0);$table->timestamps();}); }
+public function down(): void {Schema::dropIfExists('testimonials');Schema::dropIfExists('site_contents');}};

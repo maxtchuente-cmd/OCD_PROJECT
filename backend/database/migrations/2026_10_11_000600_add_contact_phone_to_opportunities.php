@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration; use Illuminate\Database\Schema\Blueprint; use Illuminate\Support\Facades\Schema;
+return new class extends Migration { public function up(): void { if (Schema::hasTable('opportunities') && !Schema::hasColumn('opportunities','contact_phone')) Schema::table('opportunities', function(Blueprint $table){ $table->string('contact_phone',40)->nullable()->after('contact_email'); }); } public function down(): void { if (Schema::hasTable('opportunities') && Schema::hasColumn('opportunities','contact_phone')) Schema::table('opportunities', function(Blueprint $table){ $table->dropColumn('contact_phone'); }); } };

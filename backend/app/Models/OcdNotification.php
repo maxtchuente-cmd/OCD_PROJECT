@@ -1,0 +1,6 @@
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Model; use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+class OcdNotification extends Model { protected $table='ocd_notifications'; protected $fillable=['user_id','type','title','message','data','read_at']; protected function casts(): array { return ['data'=>'array','read_at'=>'datetime']; } protected static function booted(): void { static::created(function(self $notification) { try { $user=$notification->user; if (!$user || !$user->email || !$user->email_notifications) return; if (str_starts_with((string)$notification->type, 'opportunity_') && !$user->opportunity_alerts) return; $body=$notification->message."\n\nConnectez-vous à votre espace OCD pour consulter les détails.\n\nOCD — Opportunités, c’est dehors."; Mail::raw($body, function($mail) use($user,$notification) { $mail->to($user->email,$user->name)->subject('[OCD] '.$notification->title); }); } catch (\Throwable $e) { Log::warning('Échec d’envoi de notification OCD par e-mail', ['notification_id'=>$notification->id,'reason'=>$e->getMessage()]); } }); } public function user(): BelongsTo { return $this->belongsTo(User::class); } }
