@@ -1,7 +1,7 @@
 import { apiRequest } from './api/httpClient'
 
 export type OpportunitySearch = { q?: string; category?: string; country?: string; page?: number; per_page?: number }
-export type OpportunityRecord = { id: number; title: string; slug: string; category: string; organization: string; country_name?: string; city?: string; deadline_at?: string; summary?: string; description?: string; opportunity_type?: string; is_remote?: boolean; application_url?: string; contact_email?: string; contact_phone?: string; status?: string }
+export type OpportunityRecord = { id: number; title: string; slug: string; category: string; organization: string; country_name?: string; city?: string; deadline_at?: string; summary?: string; description?: string; opportunity_type?: string; is_remote?: boolean; application_url?: string; contact_email?: string; contact_phone?: string; status?: string; catalog_images?: {id:number;url:string;caption?:string|null}[] }
 export type Paginated<T> = { data: T[]; current_page: number; last_page: number; total: number }
 
 /** Recherche des opportunités publiées par OCD. */

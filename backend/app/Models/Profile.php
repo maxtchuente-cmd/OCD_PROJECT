@@ -15,4 +15,5 @@ class Profile extends Model {
  public function skills(): BelongsToMany { return $this->belongsToMany(Skill::class,'profile_skills')->withPivot('level')->withTimestamps(); }
  public function languages(): BelongsToMany { return $this->belongsToMany(Language::class,'profile_languages')->withPivot('proficiency')->withTimestamps(); }
  public function experiences(): HasMany { return $this->hasMany(ProfessionalExperience::class); }
+ public function catalogImages(): HasMany { return $this->hasMany(CatalogImage::class); }
 }

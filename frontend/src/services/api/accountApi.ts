@@ -2,7 +2,7 @@ const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/ap
 
 export type AccountType = 'candidate' | 'professional' | 'freelancer' | 'entrepreneur' | 'organization'
 export type AccountProfile = {
-  id?: number; avatar_url?: string | null; review_status?: 'draft' | 'pending' | 'approved' | 'rejected'; review_note?: string | null; public_name?: string | null; phone?: string | null; country_id?: number | null
+  id?: number; catalog_images?: {id:number;url:string;caption?:string|null;is_public?:boolean}[]; avatar_url?: string | null; review_status?: 'draft' | 'pending' | 'approved' | 'rejected'; review_note?: string | null; public_name?: string | null; phone?: string | null; country_id?: number | null
   city?: string | null; region?: string | null; nationality?: string | null; professional_title?: string | null
   professional_category_id?: number | null; country?: ReferenceItem | null; bio?: string | null; education_level?: string | null
   years_experience?: number | null; available_for_work?: boolean; is_public?: boolean
@@ -33,6 +33,8 @@ export const accountApi = {
   me: () => request<{ user: { id: number; name: string; email: string; account_type?: string }; profile: AccountProfile }>('/auth/me'),
   updateProfile: (data: AccountProfile) => request<{ data: AccountProfile }>('/profile', { method: 'PUT', body: JSON.stringify(data) }),
   submitProfileReview: () => request<{ message: string; data: AccountProfile }>('/profile/submit-review', { method: 'POST', body: JSON.stringify({}) }),
+  uploadCatalog: async (files: File[]) => { const form = new FormData(); files.forEach(file => form.append('images[]', file)); const token = readToken(); const response = await fetch(`${API_BASE}/profile/catalog`, { method: 'POST', headers: { Accept: 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: form }); const payload = await response.json().catch(() => ({})); if (!response.ok) throw new Error(payload.message || 'Envoi du catalogue impossible.'); return payload as { message: string; data: { id:number; url:string; caption?:string|null; is_public:boolean }[] } },
+  deleteCatalogImage: (id:number) => request<{message:string}>(`/profile/catalog/${id}`, { method:'DELETE' }),
   uploadAvatar: async (file: File) => { const form = new FormData(); form.append('avatar', file); const token = readToken(); const response = await fetch(`${API_BASE}/profile/avatar`, { method: 'POST', headers: { Accept: 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: form }); const payload = await response.json().catch(() => ({})); if (!response.ok) throw new Error(payload.message || 'Envoi de la photo impossible.'); return payload as { message: string; avatar_url: string } },
   logout: async () => { try { await request('/auth/logout', { method: 'POST' }) } finally { localStorage.removeItem('ocd_access_token') } },
   countries: async () => (await request<{ data: ReferenceItem[] }>('/references/countries')).data,

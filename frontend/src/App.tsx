@@ -5,7 +5,7 @@ import Icon from './components/ui/Icon'
 import './account.css'
 
 export default function App() {
-  const [view, setView] = useState<'home' | 'account'>('home')
+  const [view, setView] = useState<'home' | 'account'>(() => window.location.pathname.startsWith('/membre') || window.location.pathname.startsWith('/administration') || window.location.pathname.startsWith('/connexion') ? 'account' : 'home')
   const [accountMode, setAccountMode] = useState<'login' | 'register'>('login')
   const openAccount = (mode: 'login' | 'register' = 'login') => { setAccountMode(mode); setView('account') }
   if (view === 'account') return <AccountPage onBack={() => setView('home')} initialMode={accountMode} />
